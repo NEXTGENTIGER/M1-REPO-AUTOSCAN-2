@@ -4,7 +4,7 @@ services:
   nmapscanner:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Nmap/Dockerfile
     container_name: nmapscanner
     volumes:
       - ./scanner.py:/app/Nmapscan.py
