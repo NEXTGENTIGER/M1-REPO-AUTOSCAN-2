@@ -9,12 +9,10 @@ services:
     volumes:
       - ./scanner.py:/app/scanner.py
       - ./results:/app/results
-    command: python3 /app/scanner.py 192.168.1.1
+    working_dir: /app
+    entrypoint: ["python3", "scanner.py"]
     networks:
       - secnet
-      
-volumes:
-  pgdata:
 
 networks:
   secnet:
