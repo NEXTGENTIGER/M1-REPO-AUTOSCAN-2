@@ -4,7 +4,12 @@ import sys
 import os
 
 def main():
-    target = sys.argv[1] if len(sys.argv) > 1 else "scanme.nmap.org"
+    # Vérifie qu'un argument a bien été passé
+    if len(sys.argv) < 2:
+        print("Usage : python script.py <adresse_ip_ou_nom_domaine>")
+        sys.exit(1)
+
+    target = sys.argv[1]
     scanner = nmap.PortScanner()
 
     # Scan complet : SYN scan, version, OS, scripts, tous les ports TCP
