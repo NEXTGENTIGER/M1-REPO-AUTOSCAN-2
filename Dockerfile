@@ -4,6 +4,6 @@ RUN apt-get update && apt-get install -y nmap && pip install python-nmap
 
 WORKDIR /app
 
-COPY scanner.py .
+COPY Nmapscan.py .
 
 CMD ["python3", "/app/Nmapscan.py"]
