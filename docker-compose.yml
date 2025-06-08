@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: msf
+      POSTGRES_PASSWORD: msf
+      POSTGRES_DB: msf
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - secnet
+
+  metasploit:
+    build:
+      context: .
+      dockerfile: Dockerfile-metas
+    container_name: metasploit
+    tty: true
+    stdin_open: true
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://msf:msf@db:5432/msf
+    volumes:
+      - ./msf_auto_scan.py:/app/msf_auto_scan.py
+      - ./metasploit/scan_template.rc:/app/metasploit/scan_template.rc
+      - ./metasploit/results:/app/metasploit/results
+      - ./metasploit/database.yml:/root/.msf4/database.yml
+    entrypoint: []
+    command: python3 /app/msf_auto_scan.py
+    networks:
+      - secnet
+
+  nmapscanner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nmapscanner
+    volumes:
+      - ./scanner.py:/app/scanner.py
+      - ./results:/app/results
+    command: python3 /app/scanner.py 192.168.1.1
+    networks:
+      - secnet
+
+  tshark:
+    image: nicolaka/netshoot
+    container_name: tshark
+    command: tshark -i eth0
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - secnet
+
+  zap:
+    image: zaproxy/zap-stable
+    container_name: zap
+    ports:
+      - "8090:8090"
+    command: ["zap.sh", "-daemon", "-host", "0.0.0.0", "-port", "8090"]
+    user: "zap"
+    networks:
+      - secnet
+
+volumes:
+  pgdata:
+
+networks:
+  secnet:
+    driver: bridge
