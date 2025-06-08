@@ -6,4 +6,4 @@ WORKDIR /app
 
 COPY scanner.py .
 
-CMD ["python3", "/app/scanner.py"]
+CMD ["python3", "/app/Nmapscan.py"]
